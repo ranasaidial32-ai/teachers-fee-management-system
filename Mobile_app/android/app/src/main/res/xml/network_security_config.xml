@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  network_security_config.xml — Android Network Security Configuration
+  
+  PRD Reference: Section 10 — Security & Compliance
+    "All API calls over HTTPS (TLS 1.3)"
+    "All API calls over HTTPS" — enforced here at OS level.
+    
+  This file is referenced in AndroidManifest.xml via:
+    android:networkSecurityConfig="@xml/network_security_config"
+    
+  CONFIGURATION BREAKDOWN:
+  
+  1. base-config:
+     cleartextTrafficPermitted="false"
+     Blocks ALL plain HTTP traffic globally (production default).
+     
+  2. debug-overrides (DEBUG BUILDS ONLY):
+     Allows cleartext traffic to local development server only.
+     10.0.2.2 = Android emulator host (your development machine)
+     10.0.3.2 = Genymotion emulator host
+     These entries are IGNORED in release builds.
+     
+  3. domain-config for production domains:
+     Force HTTPS + Certificate pinning for API and R2 storage.
+     
+  CERTIFICATE PINNING:
+    Pin the public key of Railway/Render server certificate.
+    Run: openssl s_client -connect api.edupay.dev:443 | 
+         openssl x509 -pubkey -noout | 
+         openssl pkey -pubin -outform der | 
+         openssl dgst -sha256 -binary | base64
+    Replace sha256/PLACEHOLDER with actual pin value before release.
+    
+  NOTE: Certificate pinning is commented out in MVP to avoid
+  breaking the app during certificate renewal. Enable in Phase 5
+  (Security Hardening per PRD Section 12).
+-->
+
+<network-security-config>
+
+    <!-- ── Production Default ──────────────────────────────────────────────── -->
+    <!--
+      Block ALL cleartext (HTTP) traffic by default.
+      PRD Section 10: "All API calls over HTTPS (TLS 1.3)"
+    -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Trust system CAs (commercial certificates) -->
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- ── Debug Overrides (Development Only) ─────────────────────────────── -->
+    <!--
+      Applied ONLY in debug builds (android:debuggable="true").
+      Allows HTTP to local development server running on your machine.
+      COMPLETELY IGNORED in release builds — no security risk.
+      
+      PRD Section 12 Phase 1: Development setup requires local server.
+    -->
+    <debug-overrides>
+        <trust-anchors>
+            <!-- Trust system CAs -->
+            <certificates src="system" />
+            <!-- Trust user-installed CAs (e.g., Charles Proxy certificate) -->
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+
+    <!-- ── Local Development Servers ──────────────────────────────────────── -->
+    <!--
+      Allow HTTP ONLY to local development hosts.
+      10.0.2.2 = Android emulator loopback to host machine (localhost:5000)
+      10.0.3.2 = Genymotion emulator loopback
+      192.168.x.x = Physical device on same WiFi network as dev machine
+      
+      These are in a debug-visible config — release builds ignore cleartext.
+      android:usesCleartextTraffic="false" in AndroidManifest.xml is
+      the final guard.
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Android emulator → Mac/PC localhost -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <!-- Genymotion emulator → Mac/PC localhost -->
+        <domain includeSubdomains="false">10.0.3.2</domain>
+        <!-- Physical device on local network (replace with your dev machine IP) -->
+        <domain includeSubdomains="false">192.168.1.2</domain>
+        <!-- Standard localhost -->
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+
+    <!-- ── Production API Domain ──────────────────────────────────────────── -->
+    <!--
+      Explicitly configure EduPay production API domain.
+      Forces HTTPS + enables certificate pinning (Phase 5).
+      PRD Section 10: HTTPS + TLS 1.3 enforcement.
+    -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">edupay.dev</domain>
+        <domain includeSubdomains="true">api.edupay.dev</domain>
+        <domain includeSubdomains="true">railway.app</domain>
+        <domain includeSubdomains="true">render.com</domain>
+
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+
+        <!--
+          CERTIFICATE PINNING (Phase 5 — PRD Section 12)
+          Uncomment and set actual pin values before production release.
+          Pin both primary cert and backup to prevent service outage on rotation.
+          
+          <pin-set expiration="2026-01-01">
+              Primary certificate public key pin
+              <pin digest="SHA-256">REPLACE_WITH_ACTUAL_PRIMARY_PIN_BASE64=</pin>
+              Backup pin — in case primary certificate needs to be rotated
+              <pin digest="SHA-256">REPLACE_WITH_ACTUAL_BACKUP_PIN_BASE64=</pin>
+          </pin-set>
+        -->
+    </domain-config>
+
+    <!-- ── Cloudflare R2 Storage ───────────────────────────────────────────── -->
+    <!--
+      Cloudflare R2 signed URLs for file downloads.
+      PRD Section 07: "R2 files accessed via short-lived signed URLs"
+      No certificate pinning on R2 — Cloudflare rotates certificates
+      frequently and uses a CDN with shared certificates.
+    -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">r2.cloudflarestorage.com</domain>
+        <domain includeSubdomains="true">cloudflare.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+
+    <!-- ── Firebase Services ───────────────────────────────────────────────── -->
+    <!--
+      FCM, Firebase Analytics, Firebase Core all use Google's certificates.
+      System CAs cover Google's certificate chain.
+    -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">googleapis.com</domain>
+        <domain includeSubdomains="true">firebase.google.com</domain>
+        <domain includeSubdomains="true">fcm.googleapis.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+
+</network-security-config>

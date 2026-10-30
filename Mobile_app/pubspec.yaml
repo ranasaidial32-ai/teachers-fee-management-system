@@ -1,0 +1,72 @@
+name: edupay_app
+description: EduPay — Tuition Fee Management App for Teachers and Students.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+  go_router: ^13.2.0
+  dio: ^5.4.3+1
+  socket_io_client: ^2.0.3+1
+  firebase_core: ^3.6.0
+  firebase_messaging: ^15.1.3
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.3
+  hive_flutter: ^1.1.0
+  hive: ^2.2.3
+  workmanager: ^0.9.0
+  path_provider: ^2.1.3
+  permission_handler: ^11.3.1
+  file_picker: ^8.0.3
+  # open_file_plus: ^3.4.1+1
+  mime: ^1.0.5
+  http: ^1.2.1
+  record: ^5.1.1
+  just_audio: ^0.9.38
+  image_picker: ^1.1.1
+  cached_network_image: ^3.3.1
+  flutter_image_compress: ^2.2.0
+  # FIXED: Back to 17.x — compatible with AGP 8.9.3
+  flutter_local_notifications: ^17.1.2
+  google_fonts: ^6.2.1
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+  badges: ^3.1.2
+  intl: ^0.19.0
+  timeago: ^3.6.1
+  device_info_plus: ^10.1.0
+  package_info_plus: ^8.0.0
+  uuid: ^4.4.0
+  equatable: ^2.0.5
+  logger: ^2.3.0
+  connectivity_plus: ^6.0.3
+  url_launcher: ^6.3.0
+  share_plus: ^12.0.0
+
+dependency_overrides:
+  record_linux: ^1.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.9
+  riverpod_generator: ^2.4.0
+  hive_generator: ^2.0.1
+  json_serializable: ^6.8.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/avatars/avatar_1.png
+    - assets/avatars/avatar_2.png
+    - assets/avatars/avatar_3.png
+    - assets/avatars/avatar_4.png
+    - assets/avatars/avatar_5.png

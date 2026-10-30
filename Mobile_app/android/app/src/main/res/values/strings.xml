@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  strings.xml — Android string resources for EduPay.
+  
+  Centralised string resources for:
+  - App name (shown in launcher, task switcher, settings)
+  - Notification channel names and descriptions
+  - Permission rationale strings (shown in system dialogs)
+  - FileProvider authority
+  
+  PRD Reference: Section 05 — Notification System
+    Notification channel ID must match:
+    - AndroidManifest.xml meta-data
+    - FlutterLocalNotificationsPlugin channel creation in main.dart
+    - FCM default_notification_channel_id meta-data
+    
+  LOCALISATION:
+    To add Hindi support, create:
+    res/values-hi/strings.xml
+    and translate these strings.
+-->
+<resources>
+
+    <!-- ── App Identity ──────────────────────────────────────────────────── -->
+    <string name="app_name">EduPay</string>
+    <string name="app_description">Tuition Fee Management</string>
+
+    <!-- ── Notification Channels ─────────────────────────────────────────── -->
+    <!--
+      PRD Section 05: FCM notification channel
+      Channel ID must match AppConstants.fcmChannelId in Dart code.
+      Android 8+ (API 26+) requires channels for all notifications.
+    -->
+
+    <!-- Main EduPay notifications channel -->
+    <string name="notification_channel_id">edupay_channel</string>
+    <string name="notification_channel_name">EduPay Notifications</string>
+    <string name="notification_channel_description">
+        Fee payment reminders and updates from EduPay
+    </string>
+
+    <!-- Download complete notifications channel -->
+    <string name="download_channel_id">edupay_downloads</string>
+    <string name="download_channel_name">EduPay Downloads</string>
+    <string name="download_channel_description">
+        Notifications when course files finish downloading
+    </string>
+
+    <!-- ── Permission Rationale ───────────────────────────────────────────── -->
+    <!--
+      Shown in custom permission rationale dialogs before requesting
+      system permissions. Plain language required.
+    -->
+
+    <!-- Notification permission (Android 13+) -->
+    <string name="permission_notification_title">Allow Notifications</string>
+    <string name="permission_notification_message">
+        EduPay needs notification permission to alert you when your tuition fee
+        is overdue and when your teacher shares new study materials.
+    </string>
+
+    <!-- Microphone permission for voice notes -->
+    <!-- PRD Section 06: Voice recordings -->
+    <string name="permission_microphone_title">Allow Microphone Access</string>
+    <string name="permission_microphone_message">
+        EduPay needs microphone access to record voice messages that you can
+        send to your teacher and classmates in the batch group chat.
+    </string>
+
+    <!-- Storage permission for file downloads -->
+    <!-- PRD Section 07: Smart File Sync -->
+    <string name="permission_storage_title">Allow Storage Access</string>
+    <string name="permission_storage_message">
+        EduPay needs storage permission to save course materials shared by
+        your teacher so you can view them offline even after they are removed
+        from the server.
+    </string>
+
+    <!-- Camera permission for image sharing -->
+    <string name="permission_camera_title">Allow Camera Access</string>
+    <string name="permission_camera_message">
+        EduPay needs camera access to let you take photos to share in your
+        batch group chat.
+    </string>
+
+    <!-- ── FileProvider ───────────────────────────────────────────────────── -->
+    <!--
+      Used by FileProvider to generate content:// URIs for downloaded files.
+      Must match android:authorities in AndroidManifest.xml.
+      PRD Section 10: Safe file sharing without exposing app-private storage.
+    -->
+    <string name="file_provider_authority" translatable="false">
+        com.edupay.app.fileprovider
+    </string>
+
+    <!-- ── WorkManager Notifications ─────────────────────────────────────── -->
+    <!-- Shown while background download is in progress (foreground service) -->
+    <string name="download_notification_title">Downloading file…</string>
+    <string name="download_notification_message">
+        EduPay is downloading a file shared by your teacher.
+    </string>
+    <string name="download_complete_title">Download complete</string>
+    <string name="download_complete_message">
+        Your file is ready to view offline.
+    </string>
+
+    <!-- ── Battery Optimisation ───────────────────────────────────────────── -->
+    <!--
+      PRD Section 11: "Aggressive battery optimization kills background tasks"
+      These strings are used when prompting user to whitelist EduPay from
+      battery optimisation.
+    -->
+    <string name="battery_optimisation_title">Improve Reliability</string>
+    <string name="battery_optimisation_message">
+        To ensure you always receive fee reminders and file downloads on time,
+        please exempt EduPay from battery optimisation.
+    </string>
+    <string name="battery_optimisation_button">Allow in Background</string>
+
+</resources>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  styles.xml — Android Application Styles
+  
+  PRD Reference: Section 08 — Tech Stack
+    "Mobile App: Flutter 3.x (Dart) — Single codebase for iOS + Android"
+    Flutter renders its own UI — Android styles only affect:
+      1. Splash screen (before Flutter engine loads)
+      2. System UI (status bar, navigation bar) colour
+      3. Window background (prevents white flash on cold start)
+  
+  THEMES:
+    LaunchTheme   — Applied to MainActivity during Flutter engine init.
+                    Matches EduPay brand colours from app_theme.dart.
+                    Prevents white/black flash on app cold start.
+                    
+    NormalTheme   — Applied after Flutter engine is ready.
+                    Transparent background — Flutter paints over it.
+                    
+  BRAND COLOURS (from core/theme/app_theme.dart):
+    Primary:   #00BFA5 (teal — EduPay brand)
+    Background: #FFFFFF (white)
+    
+  REFERENCED IN:
+    AndroidManifest.xml:
+      android:theme="@style/LaunchTheme" on MainActivity
+-->
+
+<resources>
+
+    <!-- ── Launch / Splash Theme ──────────────────────────────────────────── -->
+    <!--
+      Shown immediately on app cold start, before Flutter engine loads.
+      Background colour prevents white flash.
+      Status bar matches EduPay teal brand colour.
+      
+      PRD Section 01: "App rated ≥4.2 on stores" — polish matters.
+      A clean, branded splash is part of first-impression quality.
+    -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+
+        <!-- Splash background — EduPay brand white -->
+        <!-- Matches Flutter app background to prevent colour flash -->
+        <item name="android:windowBackground">@drawable/launch_background</item>
+
+        <!-- No title bar / action bar -->
+        <item name="android:windowNoTitle">true</item>
+
+        <!-- Make status bar transparent so Flutter can control it -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+
+        <!-- Status bar colour — EduPay primary teal -->
+        <item name="android:statusBarColor">@color/primary_teal</item>
+
+        <!-- Light status bar icons (white icons on teal background) -->
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Navigation bar colour -->
+        <item name="android:navigationBarColor">@color/background_white</item>
+
+        <!-- Full screen — Flutter handles insets -->
+        <item name="android:windowFullscreen">false</item>
+
+        <!-- Hardware acceleration -->
+        <item name="android:hardwareAccelerated">true</item>
+
+    </style>
+
+    <!-- ── Normal Theme ───────────────────────────────────────────────────── -->
+    <!--
+      Switched to after Flutter engine initialisation.
+      Transparent window background — Flutter renders everything.
+      This switch happens in MainActivity.kt via
+      setTheme(R.style.NormalTheme) before super.onCreate().
+    -->
+    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+
+        <!-- Transparent — Flutter paints its own background -->
+        <item name="android:windowBackground">@android:color/white</item>
+
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+
+        <!-- Status bar — transparent, Flutter controls via SystemChrome -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!-- Dark status bar text/icons for white backgrounds in Flutter -->
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Navigation bar — white background with dark buttons -->
+        <item name="android:navigationBarColor">@color/background_white</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <item name="android:hardwareAccelerated">true</item>
+
+    </style>
+
+    <!-- ── Notification Channel Style ─────────────────────────────────────── -->
+    <!--
+      Not a visual style — used programmatically.
+      Channel ID matches AppConstants.fcmChannelId = 'edupay_channel'
+      and AndroidManifest.xml meta-data.
+      Defined here for reference and strings.xml linkage.
+    -->
+
+</resources>

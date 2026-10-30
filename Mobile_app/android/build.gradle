@@ -1,0 +1,36 @@
+// android/build.gradle
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    // Force ALL subprojects to use the same Kotlin & AndroidX versions
+    configurations.configureEach {
+        resolutionStrategy {
+            // Kotlin stdlib lock
+            force "org.jetbrains.kotlin:kotlin-stdlib:2.1.21"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.21"
+            force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.21"
+            
+            // AndroidX lock — prevents pulling 1.18.0/1.12.4 which demand AGP 8.9.1+
+            force "androidx.core:core:1.15.0"
+            force "androidx.core:core-ktx:1.15.0"
+            force "androidx.activity:activity:1.9.3"
+            force "androidx.activity:activity-ktx:1.9.3"
+            force "androidx.browser:browser:1.8.0"
+            force "androidx.navigationevent:navigationevent-android:1.0.0"
+        }
+    }
+}
+
+rootProject.buildDir = file("../build")
+
+subprojects {
+    project.buildDir = file("${rootProject.buildDir}/${project.name}")
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

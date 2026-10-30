@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Runner.entitlements — EduPay iOS App Entitlements
+  
+  PRD Reference: Section 05 — Notification System
+    "FCM data messages so they surface in the device notification bar
+    even when the app is closed, in the background, or the device
+    is in doze mode"
+    → Requires: aps-environment (push notifications entitlement)
+    
+  PRD Reference: Section 07 — Smart File Sync
+    "Flutter background service (WorkManager) on student devices
+    auto-downloads and saves file to local app directory"
+    → Requires: background fetch + processing entitlements
+    
+  PRD Reference: Section 10 — Security & Compliance
+    "JWT tokens expire in 15 min"
+    "Device token rotation on each login"
+    → Requires: Keychain access (flutter_secure_storage)
+    
+  PRD Reference: Section 06 — Encrypted Group Chat
+    "E2EE via Signal Protocol in chat"
+    → Requires: Keychain for Signal Protocol key storage
+    
+  SETUP:
+    1. Open Xcode → Runner target → Signing & Capabilities
+    2. Add "Push Notifications" capability
+       (automatically adds aps-environment)
+    3. Add "Background Modes" capability
+       (automatically adds UIBackgroundModes in Info.plist)
+    4. Bundle ID must match Firebase project:
+       com.edupay.app (from android namespace — use same for iOS)
+       
+  ENVIRONMENT:
+    Development:  aps-environment = development
+    Production:   aps-environment = production
+    Xcode manages this automatically based on build configuration.
+    
+  KEYCHAIN GROUPS:
+    flutter_secure_storage uses Keychain to store:
+      - JWT access token  (AppConstants.keyAccessToken)
+      - JWT refresh token (AppConstants.keyRefreshToken)
+      - User ID, role, name (AppConstants.keyUserId, etc.)
+      - Device ID         (AppConstants.keyDeviceId)
+-->
+<plist version="1.0">
+<dict>
+
+    <!-- ── Push Notifications ──────────────────────────────────────────────── -->
+    <!--
+      Required for FCM APNs delivery.
+      PRD Section 05: Firebase Cloud Messaging on iOS.
+      
+      AppDelegate.swift registers with APNs and forwards token to Firebase:
+        UNUserNotificationCenter.current().delegate = self
+        application.registerForRemoteNotifications()
+        
+      Values:
+        development — development/sandbox APNs server (debug builds)
+        production  — production APNs server (TestFlight + App Store)
+        
+      Xcode automatically selects the correct value based on
+      the signing certificate (development vs distribution).
+    -->
+    <key>aps-environment</key>
+    <string>development</string>
+
+    <!-- ── Keychain Sharing ────────────────────────────────────────────────── -->
+    <!--
+      Allows flutter_secure_storage to use the device Keychain.
+      PRD Section 10: Secure token storage on iOS.
+      
+      Keychain items stored:
+        access_token   — JWT access token (15min TTL, PRD Section 10)
+        refresh_token  — JWT refresh token (7d TTL)
+        user_id        — Current user ID
+        user_role      — teacher | student (PRD Section 02)
+        device_id      — Per-device unique ID for refresh token rotation
+        
+      Keychain items persist across app reinstalls — tokens must be
+      validated on restore (auth_state.dart handles this).
+      
+      The keychain-access-groups value must match your Apple Team ID
+      prefix + bundle ID. Replace ${TeamIdentifierPrefix} with your
+      Apple Developer Team ID (10-character alphanumeric).
+    -->
+    <key>keychain-access-groups</key>
+    <array>
+        <!-- Primary app keychain group -->
+        <string>$(AppIdentifierPrefix)com.edupay.app</string>
+    </array>
+
+    <!-- ── Background Fetch ────────────────────────────────────────────────── -->
+    <!--
+      Enables periodic background fetch.
+      PRD Section 07: "workmanager (background tasks)"
+      flutter/workmanager uses iOS background fetch for periodic tasks.
+      
+      Note: UIBackgroundModes array in Info.plist handles the
+      background mode declarations. This entitlement enables the
+      BGAppRefreshTask API used by WorkManager on iOS.
+    -->
+    <key>com.apple.developer.background-task</key>
+    <true/>
+
+    <!-- ── Network Extensions ─────────────────────────────────────────────── -->
+    <!--
+      NOT required for MVP.
+      Commented out — would be needed for VPN or network filtering features.
+      PRD Section 10: "All API calls over HTTPS (TLS 1.3)" — handled by ATS.
+    -->
+    <!--
+    <key>com.apple.developer.networking.networkextension</key>
+    <array>
+        <string>packet-tunnel-provider</string>
+    </array>
+    -->
+
+    <!-- ── Associated Domains (Deep Linking) ──────────────────────────────── -->
+    <!--
+      Required for Universal Links deep linking support.
+      Referenced in AndroidManifest.xml:
+        android:autoVerify="true"
+        android:host="edupay.dev"
+        android:pathPrefix="/app"
+      
+      iOS equivalent requires associated-domains entitlement AND
+      an apple-app-site-association file hosted at edupay.dev/.well-known/
+      
+      Set up when deep link / invite link feature is implemented.
+      Uncomment and configure before Phase 6 (PRD Section 12).
+    -->
+    <!--
+    <key>associated-domains</key>
+    <array>
+        <string>applinks:edupay.dev</string>
+        <string>webcredentials:edupay.dev</string>
+    </array>
+    -->
+
+    <!-- ── App Groups (optional — for WorkManager shared container) ──────── -->
+    <!--
+      App Groups allow sharing data between the main app and
+      background extensions (e.g., notification service extension).
+      
+      Required if using a notification service extension for
+      media attachments in FCM rich notifications.
+      
+      Not required for MVP — standard FCM data messages (PRD Section 05)
+      do not need a service extension.
+      
+      Uncomment if adding rich push notification images in v2.
+    -->
+    <!--
+    <key>com.apple.security.application-groups</key>
+    <array>
+        <string>group.com.edupay.app</string>
+    </array>
+    -->
+
+</dict>
+</plist>

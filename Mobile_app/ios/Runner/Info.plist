@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Info.plist — EduPay iOS Application Configuration
+  
+  PRD Reference: Section 05 — Notification System
+    UIBackgroundModes includes 'remote-notification' so FCM data messages
+    wake the app even when in background/terminated.
+    
+  PRD Reference: Section 07 — Smart File Sync
+    UIBackgroundModes includes 'background-fetch' and 'processing'
+    for WorkManager-equivalent background tasks on iOS.
+    
+  PRD Reference: Section 10 — Security & Compliance
+    NSAppTransportSecurity configured to allow only HTTPS in production.
+    NSAllowsLocalNetworking = true for development only.
+    
+  USAGE DESCRIPTION STRINGS:
+    Required by App Store Review — must explain WHY the app needs each
+    permission in plain language that users understand.
+    Vague descriptions cause App Store rejection.
+-->
+<plist version="1.0">
+<dict>
+
+    <!-- ── App Identity ────────────────────────────────────────────────────── -->
+    <key>CFBundleDisplayName</key>
+    <string>EduPay</string>
+
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+
+    <key>CFBundleName</key>
+    <string>edupay_app</string>
+
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>$(FLUTTER_BUILD_NAME)</string>
+
+    <key>CFBundleSignature</key>
+    <string>????</string>
+
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
+
+    <!-- ── Supported Platforms ──────────────────────────────────────────────── -->
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+
+    <key>UIDeviceFamily</key>
+    <array>
+        <integer>1</integer>  <!-- iPhone -->
+        <integer>2</integer>  <!-- iPad -->
+    </array>
+
+    <!-- ── Launch Screen ────────────────────────────────────────────────────── -->
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+
+    <!-- ── Orientation ──────────────────────────────────────────────────────── -->
+    <!-- PRD: Portrait-only UI (locked in main.dart) -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+    </array>
+
+    <!-- ── Background Modes ─────────────────────────────────────────────────── -->
+    <!--
+      PRD Section 05: FCM data messages require 'remote-notification'
+        "FCM data messages so they surface in the device notification bar
+         even when the app is closed"
+         
+      PRD Section 07: Background file downloads
+        'background-fetch' — periodic fetch triggers WorkManager-equivalent
+        'processing'       — long-running background tasks (iOS 13+)
+        'fetch'            — legacy background fetch
+    -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+        <string>background-fetch</string>
+        <string>processing</string>
+        <string>fetch</string>
+        <string>audio</string>
+    </array>
+
+    <!-- ── App Transport Security ─────────────────────────────────────────── -->
+    <!--
+      PRD Section 10: "All API calls over HTTPS (TLS 1.3)"
+      
+      Production: All connections must use HTTPS.
+      Development: Allow HTTP to local development server only.
+      
+      NSAllowsArbitraryLoads = false enforces HTTPS globally.
+      Exception for localhost (10.0.2.2 equivalent on iOS is 127.0.0.1).
+    -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <!-- Enforce HTTPS globally — no arbitrary HTTP -->
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+
+        <!-- Exception for local development server -->
+        <key>NSExceptionDomains</key>
+        <dict>
+            <!-- iOS simulator connects to Mac host via localhost -->
+            <key>localhost</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <false/>
+            </dict>
+
+            <!-- Android emulator equivalent host on iOS simulator -->
+            <key>127.0.0.1</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <false/>
+            </dict>
+        </dict>
+    </dict>
+
+    <!-- ── Permission Usage Descriptions ────────────────────────────────────── -->
+    <!--
+      App Store REQUIRES these strings.
+      Must clearly explain WHY the permission is needed.
+      Vague strings → App Store rejection.
+    -->
+
+    <!-- Camera — image picker -->
+    <key>NSCameraUsageDescription</key>
+    <string>EduPay uses your camera to let you take photos to share in your batch group chat with your teacher and classmates.</string>
+
+    <!-- Photo Library — image picker -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>EduPay accesses your photo library so you can share images in your batch group chat. Images are only shared when you choose to send them.</string>
+
+    <!-- Photo Library Add — saving downloaded images -->
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>EduPay can save images shared by your teacher to your photo library for offline viewing.</string>
+
+    <!-- Microphone — voice notes -->
+    <!-- PRD Section 06: "Voice recordings (AAC / OGG)" -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>EduPay uses your microphone to record voice messages that you can send to your teacher and classmates in the batch group chat.</string>
+
+    <!-- Local Network — development server discovery -->
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>EduPay connects to a local development server during testing. This is not used in the production app.</string>
+
+    <!-- Contacts — not used, but declaring prevents iOS prompt -->
+    <!-- Face ID — not used -->
+
+    <!-- ── URL Types (Deep Linking) ──────────────────────────────────────── -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>edupay</string>
+            </array>
+        </dict>
+        <!-- Reversed client ID for Google Sign-In (if added later) -->
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <!-- Replace with actual reversed client ID from GoogleService-Info.plist -->
+                <string>com.googleusercontent.apps.YOUR_IOS_CLIENT_ID</string>
+            </array>
+        </dict>
+    </array>
+
+    <!-- ── Associated Domains (Universal Links) ──────────────────────────── -->
+    <!-- Enables https://edupay.dev/app/* deep links -->
+    <!-- Requires apple-app-site-association file on server -->
+
+    <!-- ── iTunes ────────────────────────────────────────────────────────── -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+
+    <!-- ── Minimum iOS Version ───────────────────────────────────────────── -->
+    <!-- Flutter 3.x requires iOS 12.0+ -->
+    <key>MinimumOSVersion</key>
+    <string>12.0</string>
+
+    <!-- ── CADisableMinimumFrameDurationOnPhone ─────────────────────────── -->
+    <!-- Enable ProMotion 120Hz on iPhone 13 Pro and later -->
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+
+    <!-- ── UIApplicationSceneManifest ───────────────────────────────────── -->
+    <!-- Required for multi-window iPad support -->
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <false/>
+    </dict>
+
+</dict>
+</plist>

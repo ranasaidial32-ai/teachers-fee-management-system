@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  colors.xml — Android Application Colours
+  
+  PRD Reference: Section 08 — Tech Stack
+    Material 3 theme from core/theme/app_theme.dart
+    Android system colours match Flutter theme.
+    
+  COLOUR SYSTEM:
+    Primary:    #00BFA5 — EduPay teal (Material 3 primary)
+    Secondary:  #00897B — Darker teal (secondary variant)
+    Background: #FFFFFF — App background
+    Surface:    #F5F5F5 — Card surface
+    Error:      #D32F2F — Error / overdue status
+    
+  FEE STATUS COLOURS (PRD Section 04 — Payment Status States):
+    Pending:  #FFA726 — Amber (within grace period)
+    Overdue:  #D32F2F — Red (grace period expired)
+    Paid:     #43A047 — Green (confirmed payment)
+    
+  USED BY:
+    styles.xml          — Splash/window colours
+    AndroidManifest.xml — com.google.firebase.messaging.default_notification_color
+    launch_background   — Splash screen drawable
+    notification icons  — FCM notification tint
+-->
+
+<resources>
+
+    <!-- ── Brand Colours ──────────────────────────────────────────────────── -->
+
+    <!-- Primary brand teal — EduPay identity colour -->
+    <!-- Used: status bar, notification colour, splash background -->
+    <color name="primary_teal">#00BFA5</color>
+
+    <!-- Darker teal — pressed states, secondary elements -->
+    <color name="primary_teal_dark">#00897B</color>
+
+    <!-- Light teal — backgrounds, chips, badges -->
+    <color name="primary_teal_light">#E0F2F1</color>
+
+    <!-- ── Neutral Colours ────────────────────────────────────────────────── -->
+
+    <!-- App background — pure white -->
+    <color name="background_white">#FFFFFF</color>
+
+    <!-- Card / surface background -->
+    <color name="surface_grey">#F5F5F5</color>
+
+    <!-- Primary text -->
+    <color name="text_primary">#212121</color>
+
+    <!-- Secondary / hint text -->
+    <color name="text_secondary">#757575</color>
+
+    <!-- Divider lines -->
+    <color name="divider">#E0E0E0</color>
+
+    <!-- ── Semantic Colours ───────────────────────────────────────────────── -->
+
+    <!-- Error / destructive actions -->
+    <color name="error_red">#D32F2F</color>
+
+    <!-- Success / confirmation -->
+    <color name="success_green">#43A047</color>
+
+    <!-- Warning / caution -->
+    <color name="warning_amber">#FFA726</color>
+
+    <!-- Info / informational -->
+    <color name="info_blue">#1976D2</color>
+
+    <!-- ── Fee Status Colours (PRD Section 04) ────────────────────────────── -->
+    <!--
+      Payment Status States (PRD Section 04):
+        Pending — not yet paid, within grace
+        Overdue — grace period expired, unpaid
+        Paid    — marked paid by teacher
+        
+      These colours match fee_status_badge.dart in Flutter.
+    -->
+
+    <!-- Pending: amber — within grace period, no action required yet -->
+    <color name="fee_pending">#FFA726</color>
+
+    <!-- Pending background (light amber) -->
+    <color name="fee_pending_bg">#FFF3E0</color>
+
+    <!-- Overdue: red — grace period expired, immediate action needed -->
+    <color name="fee_overdue">#D32F2F</color>
+
+    <!-- Overdue background (light red) -->
+    <color name="fee_overdue_bg">#FFEBEE</color>
+
+    <!-- Paid: green — confirmed by teacher -->
+    <color name="fee_paid">#43A047</color>
+
+    <!-- Paid background (light green) -->
+    <color name="fee_paid_bg">#E8F5E9</color>
+
+    <!-- ── Notification Colours ────────────────────────────────────────────── -->
+    <!--
+      FCM notification colour (PRD Section 05).
+      Referenced in AndroidManifest.xml:
+        android:resource="@color/notification_color"
+      Must be a solid colour (no alpha for notification icons).
+    -->
+    <color name="notification_color">#00BFA5</color>
+
+    <!-- Notification background for heads-up display -->
+    <color name="notification_bg">#FFFFFF</color>
+
+    <!-- ── Chat Colours (PRD Section 06) ─────────────────────────────────── -->
+
+    <!-- Sent message bubble (teacher/student own messages) -->
+    <color name="chat_bubble_sent">#E0F2F1</color>
+
+    <!-- Received message bubble -->
+    <color name="chat_bubble_received">#F5F5F5</color>
+
+    <!-- ── System UI ───────────────────────────────────────────────────────── -->
+
+    <!-- Status bar — matches LaunchTheme in styles.xml -->
+    <color name="status_bar">#00BFA5</color>
+
+    <!-- Navigation bar — white, Flutter renders its own nav -->
+    <color name="navigation_bar">#FFFFFF</color>
+
+    <!-- Splash / launch background -->
+    <color name="launch_background">#FFFFFF</color>
+
+    <!-- ── Role Badge Colours (PRD Section 02) ────────────────────────────── -->
+
+    <!-- Teacher admin badge — teal -->
+    <color name="role_teacher">#00BFA5</color>
+
+    <!-- Student user badge — blue -->
+    <color name="role_student">#1976D2</color>
+
+</resources>

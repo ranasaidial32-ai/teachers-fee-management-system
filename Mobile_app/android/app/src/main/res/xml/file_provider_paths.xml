@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  file_provider_paths.xml — FileProvider Paths Configuration
+  
+  PRD Reference: Section 10 — Security & Compliance
+    "Local files stored in app-private directory
+    (not exposed to other apps)"
+    
+  PRD Reference: Section 07 — File Storage Architecture
+    "Students continue to view the file from local storage;
+    server copy no longer exists"
+    Files must be shareable with external viewer apps
+    (PDF reader, media player) via content:// URIs — not
+    file:// URIs (blocked on Android 7+).
+    
+  Referenced in AndroidManifest.xml:
+    <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="${applicationId}.fileprovider"
+        android:resource="@xml/file_provider_paths" />
+    
+  AUTHORITY: com.edupay.app.fileprovider
+    (applicationId from app/build.gradle = "com.edupay.app")
+    
+  PATH TYPES:
+    files-path      → Context.getFilesDir()
+                      /data/data/com.edupay.app/files/
+                      Primary app-private storage for downloads.
+                      
+    cache-path      → Context.getCacheDir()
+                      /data/data/com.edupay.app/cache/
+                      Temporary files, voice recording staging.
+                      
+    external-files-path → Context.getExternalFilesDir()
+                          /Android/data/com.edupay.app/files/
+                          App-specific external storage (not
+                          accessible to other apps without URI grant).
+                          Used for larger media files.
+                          
+  SECURITY NOTE:
+    All paths declared here are app-private.
+    FileProvider generates content:// URIs with grantUriPermissions,
+    meaning the receiving app gets temporary read access only.
+    No path traversal possible via content:// scheme.
+    
+  FLUTTER path_provider MAPPING:
+    getApplicationDocumentsDirectory() → files-path/documents/
+    getTemporaryDirectory()            → cache-path/
+    getExternalStorageDirectory()      → external-files-path/
+-->
+
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ── App Internal Files Directory ──────────────────────────────────── -->
+    <!--
+      Maps to: /data/data/com.edupay.app/files/
+      Used for: All downloaded files from Cloudflare R2.
+      
+      PRD Section 07: "Flutter background service (WorkManager) on student
+      devices auto-downloads and saves file to local app directory"
+      
+      Subdirectories:
+        downloads/   — Teacher-shared files (PDF, DOCX, XLSX, ZIP, images)
+        voice/       — Downloaded voice note recordings (AAC/OGG)
+        images/      — Downloaded chat images (JPEG, PNG, WEBP)
+    -->
+    <files-path
+        name="edupay_files"
+        path="." />
+
+    <!-- Specific named path for downloads (cleaner URI) -->
+    <files-path
+        name="edupay_downloads"
+        path="downloads/" />
+
+    <!-- Voice recordings download cache -->
+    <files-path
+        name="edupay_voice"
+        path="voice/" />
+
+    <!-- Image cache (offline-first per PRD Section 07) -->
+    <files-path
+        name="edupay_images"
+        path="images/" />
+
+    <!-- ── App Cache Directory ─────────────────────────────────────────────── -->
+    <!--
+      Maps to: /data/data/com.edupay.app/cache/
+      Used for: Temporary files during upload, voice recording staging.
+      
+      PRD Section 06: Voice recordings (AAC/OGG) staged here before
+      upload to Cloudflare R2 via chat_input_bar.dart.
+      
+      PRD Section 11: Image compression before upload (flutter_image_compress)
+      uses cache directory for compressed output staging.
+    -->
+    <cache-path
+        name="edupay_cache"
+        path="." />
+
+    <!-- Voice recording staging (record before upload) -->
+    <cache-path
+        name="edupay_voice_staging"
+        path="voice_staging/" />
+
+    <!-- Compressed image staging before R2 upload -->
+    <cache-path
+        name="edupay_image_staging"
+        path="image_staging/" />
+
+    <!-- ── External App-Private Storage ──────────────────────────────────── -->
+    <!--
+      Maps to: /Android/data/com.edupay.app/files/
+      
+      IMPORTANT: This is app-private external storage — NOT public
+      external storage. Other apps cannot access this without a
+      content:// URI grant from FileProvider.
+      
+      Used for: Large media files that benefit from external storage
+      on low-internal-storage devices.
+      
+      Requires READ_MEDIA_IMAGES / READ_EXTERNAL_STORAGE only for
+      accessing OTHER apps' files (image picker). For our own
+      external files directory, no extra permission is needed.
+    -->
+    <external-files-path
+        name="edupay_external_files"
+        path="." />
+
+    <!-- External downloads for large files -->
+    <external-files-path
+        name="edupay_external_downloads"
+        path="downloads/" />
+
+    <!-- ── External Cache ─────────────────────────────────────────────────── -->
+    <!--
+      Maps to: /Android/data/com.edupay.app/cache/
+      Fallback cache location for large temporary files.
+    -->
+    <external-cache-path
+        name="edupay_external_cache"
+        path="." />
+
+</paths>
