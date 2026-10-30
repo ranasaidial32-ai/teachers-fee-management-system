@@ -48,7 +48,7 @@ class DefaultFirebaseOptions {
   /// ── ANDROID ─────────────────────────────────────────────────────────────
   /// Replace ALL placeholder values by running: flutterfire configure
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey:            'AIzaSyBQfTdyvnpY19NP8hUTFDyVoM0__HG0BSI',
+    apiKey:            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     appId:             '1:863110905018:android:9aef7ea1d91eeaff681683',
     messagingSenderId: '863110905018',
     projectId:         'gen-lang-client-0309674476',
@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
   /// ── iOS ─────────────────────────────────────────────────────────────────
   /// Replace ALL placeholder values by running: flutterfire configure
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey:            'AIzaSyBQfTdyvnpY19NP8hUTFDyVoM0__HG0BSI',
+    apiKey:            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     appId:             '1:863110905018:ios:9aef7ea1d91eeaff681683',
     messagingSenderId: '863110905018',
     projectId:         'gen-lang-client-0309674476',
