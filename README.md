@@ -117,16 +117,6 @@ flutter run
 
 Configure the app's API base URL to point to your running backend, using the configuration method already present in the project.
 
-## Screenshots
-
-Add genuine screenshots of your own application in `docs/screenshots/`, then embed them here. Do not add sample images that do not represent the actual app.
-
-Example (replace the path with a real screenshot file):
-
-```markdown
-![Teacher dashboard](docs/screenshots/teacher-dashboard.png)
-```
-
 ## Security Notes
 
 - Authentication uses JWT, as implemented in the project.
